@@ -1,40 +1,8 @@
 import 'package:dd/core/util/barrel.dart';
 import 'package:dd/features/notes/presentation/controller/notes_controller.dart';
-import 'package:dd/pages/dd_chat_screen.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import '../../../config/presentation/strings.dart';
+import '../../dd_chat_screen.dart';
 
-import '../config/presentation/strings.dart';
-
-class HomePage extends HookConsumerWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final controller = useTextEditingController();
-
-    return const SizedBox(
-        child: SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(
-          // height: MediaQuery.sizeOf(context).height,
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          child: Column(children: [
-            Section1(),
-            Gap(
-              height: 12,
-            ),
-            Section2(),
-            Gap(
-              height: 12,
-            ),
-            Section3()
-          ]),
-        ),
-      ),
-    ));
-  }
-}
 
 class Section1 extends ConsumerWidget {
   const Section1({super.key});

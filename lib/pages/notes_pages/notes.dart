@@ -1,6 +1,8 @@
 import 'package:dd/config/presentation/states/empty_state.dart';
 import 'package:dd/config/presentation/strings.dart';
 import 'package:dd/features/notes/presentation/controller/notes_controller.dart';
+import 'package:dd/pages/notes_pages/edit_notes_page.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/util/barrel.dart';
 
@@ -51,7 +53,7 @@ class NotesPage extends ConsumerWidget {
           loading: () => const LinearProgressIndicator()),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const EditNotes()));
           },
           label: const Row(
             children: [

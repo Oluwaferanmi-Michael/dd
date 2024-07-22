@@ -20,6 +20,7 @@ class Strings {
   static const cardColors = [];
 
   static const emptyState = 'Doesnt look like theres anything here let\'s get started';
+  static const relaxPageIntro = 'Calm your mind with guided meditation and breathing exercises';
 }
 
 @immutable

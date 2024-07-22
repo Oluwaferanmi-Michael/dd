@@ -1,6 +1,7 @@
+import 'package:dd/pages/relax/relax.dart';
 import 'package:dd/pages/tasks.dart';
 
-import 'home.dart';
+import 'home/home.dart';
 import 'notes_pages/notes.dart';
 
 import '../core/resources/constants/page_constants.dart';
@@ -17,7 +18,7 @@ class MainNavPage extends ConsumerWidget {
       const HomePage(),
       const NotesPage(),
       const TasksPage(),
-      Container(),
+      const RelaxPage(),
     ];
 
     return Scaffold(
