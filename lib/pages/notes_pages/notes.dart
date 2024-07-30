@@ -2,8 +2,8 @@ import 'package:dd/config/presentation/states/empty_state.dart';
 import 'package:dd/config/presentation/strings.dart';
 import 'package:dd/features/notes/presentation/controller/notes_controller.dart';
 import 'package:dd/pages/notes_pages/edit_notes_page.dart';
-import 'package:go_router/go_router.dart';
 
+import '../../config/theme/app_colors.dart';
 import '../../core/util/barrel.dart';
 
 class NotesPage extends ConsumerWidget {
@@ -12,6 +12,13 @@ class NotesPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notes = ref.watch(notesControllerProvider);
+    if (!context.mounted) {
+      return Scaffold(
+          body: Center(
+              child: SizedBox(
+                  width: MediaQuery.sizeOf(context).width * .2,
+                  child: const LinearProgressIndicator())));
+    }
 
     return Scaffold(
       body: notes.when(
@@ -22,38 +29,85 @@ class NotesPage extends ConsumerWidget {
                     illustration: Illustrations.emptyState)
                 : Padding(
                     padding: const EdgeInsets.all(16),
-                    child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          mainAxisSpacing: 12,
-                        ),
-                        itemBuilder: (context, index) {
-                          return SizedBox(
-                            width: MediaQuery.sizeOf(context).width / 6,
-                            child: Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    color: Colors.black38,
-                                  ),
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        ref.invalidate(notesControllerProvider);
+                        Future.delayed(const Duration(seconds: 1));
+                      },
+                      child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4,
+                            mainAxisExtent:
+                                MediaQuery.sizeOf(context).height * .2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                          ),
+                          itemCount: data.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () => Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return EditNotes(
+                                    title: data.elementAt(index).title,
+                                    note: data.elementAt(index).note,
+                                    noteId: data.elementAt(index).noteId ?? '');
+                              })),
+                              child: SizedBox(
+                                height: MediaQuery.sizeOf(context).height * .3,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height:
+                                          MediaQuery.sizeOf(context).height *
+                                              .1,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        color: AppColors.lightGrey,
+                                      ),
+                                    ),
+                                    const Gap(height: 12),
+                                    Text(
+                                      data.elementAt(index).title.isEmpty
+                                          ? 'Unknown'
+                                          : data.elementAt(index).title,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Text(
+                                      data
+                                          .elementAt(index)
+                                          .createdAt
+                                          .toString(),
+                                      style: const TextStyle(
+                                          fontSize: 8, color: AppColors.grey),
+                                    ),
+                                  ],
                                 ),
-                                const Gap(height: 12),
-                                Text(data.elementAt(index).title ?? 'Unknown'),
-                                Text(
-                                    data.elementAt(index).createdAt.toString()),
-                              ],
-                            ),
-                          );
-                        }),
+                              ),
+                            );
+                          }),
+                    ),
                   );
           },
           error: (e, s) => const FlutterLogo(),
           loading: () => const LinearProgressIndicator()),
       floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const EditNotes()));
+          onPressed: () async {
+            final noteId = await ref
+                .watch(notesControllerProvider.notifier)
+                .addNote(note: '', title: '');
+
+            if (context.mounted) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          EditNotes(title: '', note: '', noteId: noteId)));
+            }
           },
           label: const Row(
             children: [

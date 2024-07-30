@@ -10,7 +10,8 @@ class AuthGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ref, child) {
+    return Consumer(
+      builder: (context, ref, child) {
       final isLoggedIn = ref.watch(authServiceProvider).isLoggedIn;
 
       if (isLoggedIn) {

@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'user_id.g.dart';
 
 @riverpod
-String userId(Ref ref) {
+Future<String> userId(Ref ref) async {
   final authState = ref.read(authServiceProvider);
-  return authState.user?.id ?? '';
+  return Future.value(authState.user?.id ?? '');
   }

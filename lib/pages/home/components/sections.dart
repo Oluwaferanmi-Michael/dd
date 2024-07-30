@@ -79,8 +79,7 @@ class Section1 extends ConsumerWidget {
                                       : ListView.builder(
                                           itemBuilder: (context, index) {
                                           return Text(
-                                            data.elementAt(index).title ??
-                                                'Unknown',
+                                            data.elementAt(index).title,
                                             style: const TextStyle(
                                               fontSize: 12,
                                             ),

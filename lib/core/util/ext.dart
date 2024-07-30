@@ -1,6 +1,4 @@
-
-
-import 'package:dd/features/gemini/domain/entities/chat_type.dart';
+import '../../features/chat_with_dd/domain/entities/chat_entity.dart';
 
 extension EnumToString on MessageFrom {
   String string() => name.toString();

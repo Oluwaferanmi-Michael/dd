@@ -8,6 +8,7 @@ import 'package:dd/features/auth/presentation/controllers/user_id.dart';
 // import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
+import '../../../chat_with_dd/domain/entities/chat_entity.dart';
 import '../../data/data_sources/gemini_source.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -24,9 +25,9 @@ class GeminiController extends _$GeminiController {
 
     final controller = StreamController<Iterable<Chats>>();
 
-    final sub = FirebaseFirestore.instance.collection(FirebaseConstants.history)
-    // .orderBy(FirebaseConstants.timeStamp, descending: true)
-    // .where(FirebaseConstants.userId, isEqualTo: userId)
+    final sub = FirebaseFirestore.instance.collection(FirebaseCollectionNames.history)
+    // .orderBy(FirebaseCollectionNames.timeStamp, descending: true)
+    // .where(FirebaseCollectionNames.userId, isEqualTo: userId)
     .snapshots().listen((snaps) {
       final chatHistory = snaps.docs.map((chat) => Chats.fromDatabase(chatData: chat.data(), chatId: chat.id));
       chatHistory.log('chat firestore subscricption');
@@ -53,11 +54,11 @@ Future<String> getGeminiResponse ({
   required String prompt
 }) async {
 
-  final userId = ref.read(userIdProvider);
+  final userId = await ref.read(userIdProvider.future);
 
   List<Content> history = [];
 
-  final value = await FirebaseFirestore.instance.collection(FirebaseConstants.history).get();
+  final value = await FirebaseFirestore.instance.collection(FirebaseCollectionNames.history).orderBy(FirebaseFieldNames.timestamp).get();
 
     final chatHistory = value.docs
       .where((values) => !values.metadata.hasPendingWrites)
@@ -82,8 +83,8 @@ Future<String> getGeminiResponse ({
   final userMessage = ChatPayload(from: MessageFrom.user.string(), message: prompt, userId: userId, );
   final aiResponse = ChatPayload(from: MessageFrom.ai.string(),  message: result ?? '', userId: userId);
 
-  await FirebaseFirestore.instance.collection(FirebaseConstants.history).add(userMessage);
-  await FirebaseFirestore.instance.collection(FirebaseConstants.history).add(aiResponse);
+  await FirebaseFirestore.instance.collection(FirebaseCollectionNames.history).add(userMessage);
+  await FirebaseFirestore.instance.collection(FirebaseCollectionNames.history).add(aiResponse);
   
   return result ?? '';
 }

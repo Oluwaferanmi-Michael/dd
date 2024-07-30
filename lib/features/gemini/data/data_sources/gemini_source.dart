@@ -1,4 +1,5 @@
 
+import 'package:dd/core/env/env.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 import '../../../../core/resources/constants/ai_constants.dart';
@@ -11,7 +12,7 @@ class GeminiSource {
     required String userText,
     required List<Content> history 
   }) async {
-    var apiKey = '';
+    var apiKey = ApiEnv.gemKey;
 
     final safetySettings = [
       SafetySetting(HarmCategory.harassment, HarmBlockThreshold.high),

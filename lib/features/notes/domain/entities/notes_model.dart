@@ -10,18 +10,17 @@ class Notes extends Equatable {
   final String note;
   final UID userId;
   final String? noteId;
-  final String? title;
+  final String title;
   final String? aiThoughts;
   final DateTime? createdAt;
 
   const Notes(
       {required this.note,
-      this.title,
+      required this.title,
       this.aiThoughts,
       required this.userId,
       this.noteId,
-      this.createdAt
-      });
+      this.createdAt});
 
   Notes.fromDatabase(
       {required Map<String, dynamic> data, required String notesId})
@@ -30,7 +29,7 @@ class Notes extends Equatable {
         userId = data[NotesConstants.userId],
         noteId = notesId,
         aiThoughts = data[NotesConstants.aiThoughts],
-        createdAt = data[NotesConstants.createdAt];
+        createdAt = (data[NotesConstants.createdAt]as Timestamp).toDate();
 
   const Notes.unknown()
       : title = '',
@@ -40,14 +39,7 @@ class Notes extends Equatable {
         noteId = '',
         createdAt = null;
 
-  // Notes copyWithNote({required String note}) =>
-  //     Notes(title: title, note: note, aiThoughts: aiThoughts, userId: userId);
-
-  // Notes copyWithTitle({required String title}) =>
-  //     Notes(title: title, note: note, aiThoughts: aiThoughts, userId: userId);
-
-  // Notes copyWithAiThoughts({required String aiThoughts}) =>
-  //     Notes(title: title, note: note, aiThoughts: aiThoughts, userId: userId);
+  
 
   Notes copyWith({
     String? aiThoughts,
@@ -59,8 +51,7 @@ class Notes extends Equatable {
           note: note ?? this.note,
           aiThoughts: aiThoughts ?? this.aiThoughts,
           userId: userId,
-          createdAt: createdAt
-          );
+          createdAt: createdAt);
 
   @override
   List<Object?> get props => [title, note, aiThoughts, userId];
@@ -77,6 +68,6 @@ class NotesPayload extends MapView<String, dynamic> {
           NotesConstants.note: note,
           NotesConstants.aiThoughts: aiThoughts,
           NotesConstants.userId: userId,
-          NotesConstants.createdAt : FieldValue.serverTimestamp()
+          NotesConstants.createdAt: FieldValue.serverTimestamp()
         });
 }

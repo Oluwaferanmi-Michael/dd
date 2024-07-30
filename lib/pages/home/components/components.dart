@@ -60,8 +60,7 @@ class NotesSummary extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<Iterable<Notes>> notes =
-        ref.watch(notesControllerProvider);
+    final notes = ref.watch(notesControllerProvider);
     return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -87,9 +86,12 @@ class NotesSummary extends ConsumerWidget {
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             )
-                          : ListView.builder(itemBuilder: (context, index) {
+                          : ListView.builder(
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              
                               return Text(
-                                data.elementAt(index).title ?? 'Unknown',
+                                data.elementAt(index).title.trim(),
                                 style: const TextStyle(
                                   fontSize: 12,
                                 ),
