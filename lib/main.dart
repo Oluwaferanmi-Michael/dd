@@ -1,3 +1,4 @@
+import 'package:dd/config/theme/theme.dart';
 import 'package:dd/core/util/barrel.dart';
 
 Future<void> main() async {
@@ -16,10 +17,12 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        colorSchemeSeed: Colors.amber,
-        fontFamily: 'Satoshi',
-      ),
+      theme: AppTheme.theme,
+
+      // ThemeData(
+      //   colorSchemeSeed: Colors.amber,
+      //   fontFamily: 'Satoshi',
+      // ),
       home: const Scaffold(
         body: AuthGate(),
       ),

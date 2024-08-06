@@ -1,5 +1,5 @@
 import 'package:dd/pages/relax/relax.dart';
-import 'package:dd/pages/tasks.dart';
+
 
 import 'home/home.dart';
 import 'notes_pages/notes.dart';
@@ -7,6 +7,7 @@ import 'notes_pages/notes.dart';
 import '../core/resources/constants/page_constants.dart';
 import '../core/util/barrel.dart';
 import '../core/util/controllers/bottom_nav_controller.dart';
+import 'tasks_pages/tasks.dart';
 
 class MainNavPage extends ConsumerWidget {
   const MainNavPage({super.key});

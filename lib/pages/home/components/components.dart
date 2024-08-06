@@ -1,6 +1,7 @@
 import 'package:dd/core/util/barrel.dart';
 import 'package:dd/features/notes/domain/entities/notes_model.dart';
 import 'package:dd/features/notes/presentation/controller/notes_controller.dart';
+import 'package:dd/features/tasks/presentation/task_controller.dart';
 import '../../../config/presentation/strings.dart';
 import '../../dd_chat_screen.dart';
 
@@ -87,16 +88,15 @@ class NotesSummary extends ConsumerWidget {
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             )
                           : ListView.builder(
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              
-                              return Text(
-                                data.elementAt(index).title.trim(),
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                ),
-                              );
-                            });
+                              itemCount: data.length,
+                              itemBuilder: (context, index) {
+                                return Text(
+                                  data.elementAt(index).title.trim(),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                );
+                              });
                     },
                     error: (e, s) => const FlutterLogo(),
                     loading: () => const LinearProgressIndicator()),
@@ -153,27 +153,25 @@ class StreakComponent extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color: Colors.black12),
+          borderRadius: BorderRadius.circular(24), color: Colors.black12),
       child: const Column(
         children: [
           Text('Streak'),
-          Text('0',
-              style: TextStyle(
-                  fontSize: 52, fontWeight: FontWeight.w900))
+          Text('0', style: TextStyle(fontSize: 52, fontWeight: FontWeight.w900))
         ],
       ),
     );
   }
 }
 
-class TasksDaySelector extends StatelessWidget {
+class TasksDaySelector extends ConsumerWidget {
   const TasksDaySelector({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tasks = ref.watch(taskControllerProvider);
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -202,12 +200,32 @@ class TasksDaySelector extends StatelessWidget {
                   const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Weekly Schedule'),
+                        Text('Task Schedule',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                         Text('data'),
                       ]),
                   const Gap(
                     height: 12,
                   ),
+                  tasks.when(
+                      data: (tasks) {
+                        return tasks.isEmpty
+                            ? const Center(
+                                child: Text('No Tasks yet',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              )
+                            : ListView.builder(
+                                itemCount: tasks.length,
+                                itemBuilder: (context, index) {
+                                  return ActionChip(
+                                    label: Text('${tasks.elementAt(index)}'),
+                                    onPressed: () {}
+                                    );
+                                });
+                      },
+                      error: (err, stackTrace) => const FlutterLogo(),
+                      loading: () => const LinearProgressIndicator()),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

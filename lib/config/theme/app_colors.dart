@@ -4,6 +4,7 @@ class AppColors {
   const AppColors._();
 
   static const seed = Colors.amber;
+  static const purple = Colors.purple;
   static const whitGrey = Colors.white12;
   static const lightGrey = Colors.black12;
   static const grey = Colors.black38;

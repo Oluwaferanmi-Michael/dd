@@ -5,6 +5,7 @@ typedef NoteId = String;
 typedef Note = String;
 typedef Step = String;
 typedef StepId = String;
+typedef TipId = String;
 
 typedef Points = String;
 
