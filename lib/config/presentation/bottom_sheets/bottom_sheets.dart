@@ -5,14 +5,29 @@ import '../../theme/app_colors.dart';
 // import '../../theme/insets.dart';
 import '../../widgets/gap.dart';
 
-class BottomSheet {
+class BottomSheetModel {
   final Widget presentation;
+  Text? description;
   final String title;
-  final List<ButtonOptions> buttons;
 
-  BottomSheet(
-      {required this.presentation, required this.title, required this.buttons});
+  BottomSheetModel({
+    required this.presentation,
+    required this.title,
+    this.description,
+  });
+}
 
+class ButtonOptions extends Equatable {
+  final String text;
+  final void Function() onPressed;
+
+  const ButtonOptions({required this.text, required this.onPressed});
+
+  @override
+  List<Object?> get props => [text, onPressed];
+}
+
+extension Present on BottomSheetModel {
   Future<void> present(BuildContext context) async {
     return showModalBottomSheet(
         useSafeArea: true,
@@ -43,55 +58,11 @@ class BottomSheet {
                         ))
                   ],
                 ),
-                const Gap(height: 24),
-                Flexible(child: presentation),
-                const Gap(height: 24),
-                Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                          style: TextButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                side: const BorderSide(width: 1)),
-                          ),
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          )),
-                      const Gap(width: 12),
-                      ...buttons.map((e) {
-                        return Expanded(
-                          flex: 2,
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12)),
-                                backgroundColor: AppColors.seed),
-                            onPressed: e.onPressed,
-                            child: Text(
-                              e.text,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        );
-                      })
-                    ])
+                const Gap(height: 16),
+                Flexible(child: SingleChildScrollView(child: presentation)),
               ],
             ),
           );
         });
   }
-}
-
-class ButtonOptions extends Equatable {
-  final String text;
-  final void Function() onPressed;
-
-  const ButtonOptions({required this.text, required this.onPressed});
-
-  @override
-  List<Object?> get props => [text, onPressed];
 }

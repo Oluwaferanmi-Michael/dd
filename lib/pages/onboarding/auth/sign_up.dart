@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+// import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../../core/resources/constants/image_constants.dart';
 
 import '../../../features/auth/presentation/controllers/authentication_controller.dart';
@@ -10,8 +10,8 @@ const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final emailController = useTextEditingController();
-    final userNameController = useTextEditingController();
+    // final emailController = useTextEditingController();
+    // final userNameController = useTextEditingController();
 
     // ref.watch();
     return Scaffold(

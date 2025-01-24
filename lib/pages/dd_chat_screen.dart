@@ -7,6 +7,7 @@ import 'package:dd/core/resources/constants/strings.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../config/theme/insets.dart';
 
 class ChatWithDDScreen extends HookConsumerWidget {
@@ -125,10 +126,16 @@ class ChatList extends HookConsumerWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: from == MessageFrom.ai.string()
-                ? AppColors.seed
-                : AppColors.lightGrey,
+                ? AppColors.lightGrey
+                : AppColors.seed,
           ),
-          child: Text(chat),
+          child: from == MessageFrom.ai.string()
+              ? MarkdownBody(
+                  data: chat,
+                  selectable: true,
+                  
+                )
+              : Text(chat),
         ),
       ],
     );

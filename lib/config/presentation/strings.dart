@@ -30,3 +30,9 @@ class Illustrations {
   static const emptyState = 'undraw_void_-3-ggu.svg';
   static const dd = 'DD.png';
 }
+@immutable
+class LottieStrings {
+  const LottieStrings._();
+
+  static const dd = 'DD.json';
+}

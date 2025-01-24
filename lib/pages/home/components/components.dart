@@ -1,60 +1,15 @@
+import 'package:dd/config/presentation/bottom_sheets/bottom_sheets.dart';
+
 import 'package:dd/core/util/barrel.dart';
-import 'package:dd/features/notes/domain/entities/notes_model.dart';
+import 'package:dd/core/util/logger.dart';
+import 'package:dd/features/focus_timer/presentation/focus_timer_controller.dart';
+
 import 'package:dd/features/notes/presentation/controller/notes_controller.dart';
+
 import 'package:dd/features/tasks/presentation/task_controller.dart';
-import '../../../config/presentation/strings.dart';
-import '../../dd_chat_screen.dart';
 
-class Section1 extends ConsumerWidget {
-  const Section1({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final notes = ref.watch(notesControllerProvider);
-    return SizedBox(
-      height: (MediaQuery.sizeOf(context).height / 3) - 20,
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const ChatWithDDScreen())),
-              child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.circular(16)),
-                  child: Center(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/illustrations/${Illustrations.dd}',
-                            width: 42,
-                          ),
-                          const Gap(
-                            height: 16,
-                          ),
-                          const Text(
-                            'Chat with DD',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          )
-                        ]),
-                  )),
-            ),
-          ),
-          const Gap(
-            width: 12,
-          ),
-          const Expanded(
-            child: NotesSummary(),
-          )
-        ],
-      ),
-    );
-  }
-}
+import '../../../config/presentation/bottom_sheets/focus_timer_bottom_sheet.dart';
+import '../../../core/util/controllers/task_select_controller.dart';
 
 class NotesSummary extends ConsumerWidget {
   const NotesSummary({super.key});
@@ -70,15 +25,13 @@ class NotesSummary extends ConsumerWidget {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text(
-              'Notes',
+              'Recent notes',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const Gap(
-              height: 12,
-            ),
+            // const Gap(
+            //   height: 12,
+            // ),
             Flexible(
-                child: SizedBox(
-              child: Center(
                 child: notes.when(
                     data: (data) {
                       return data.isEmpty
@@ -99,44 +52,76 @@ class NotesSummary extends ConsumerWidget {
                               });
                     },
                     error: (e, s) => const FlutterLogo(),
-                    loading: () => const LinearProgressIndicator()),
-              ),
-            ))
+                    loading: () => const LinearProgressIndicator()))
           ]),
         ));
   }
 }
 
-class Section2 extends ConsumerWidget {
-  const Section2({super.key});
+class SelectedTaskSummary extends ConsumerWidget {
+  const SelectedTaskSummary({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SizedBox(
-      // color: Colors.purple[300],
-      height: (MediaQuery.sizeOf(context).height / 3) - 20,
+    final selectedTaskId = ref.watch(taskSelectControllerProvider);
+    final specificTask = ref.watch(taskControllerProvider);
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      width: MediaQuery.sizeOf(context).width,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16), color: Colors.black12),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Expanded(
-            child: TasksDaySelector(),
-          ),
-          const Gap(height: 12),
-          Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  const StreakComponent(),
-                  const Gap(
-                    width: 12,
-                  ),
-                  Expanded(
-                      child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        color: Colors.black12),
-                  ))
-                ],
-              ))
+          const Text('Task Summary',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          const Gap(height: 16),
+          selectedTaskId.isEmpty
+              ? const Expanded(child: Text('No tasks yet'))
+              : Flexible(
+                  child: specificTask.when(
+                      data: (data) {
+                        final controller = PageController(
+                          initialPage: 0,
+                        );
+                        data.log();
+                        return PageView.builder(
+                            scrollDirection: Axis.horizontal,
+                            controller: controller,
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              return Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Center(
+                                        child:
+                                            Text(data.elementAt(index).task)),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(data.elementAt(index).taskStatus,
+                                            style: const TextStyle(
+                                                fontSize: 10,
+                                                color: AppColors.seed)),
+                                        Text(
+                                            data
+                                                .elementAt(index)
+                                                .dueDate
+                                                .toString(),
+                                            style:
+                                                const TextStyle(fontSize: 10)),
+                                      ],
+                                    )
+                                  ]);
+                            });
+                      },
+                      error: (error, stackTrace) => const FlutterLogo(),
+                      loading: () => const LinearProgressIndicator()),
+                )
         ],
       ),
     );
@@ -171,161 +156,110 @@ class TasksDaySelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    int? value = 0;
+
     final tasks = ref.watch(taskControllerProvider);
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Expanded(
-          flex: 1,
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16), color: Colors.black12),
-            child: IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.chevron_left_outlined)),
-          ),
-        ),
-        const Gap(
-          width: 12,
-        ),
-        Expanded(
-            flex: 6,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Colors.black12),
-              child: Column(
-                children: [
-                  const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Task Schedule',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text('data'),
-                      ]),
-                  const Gap(
-                    height: 12,
-                  ),
-                  tasks.when(
-                      data: (tasks) {
-                        return tasks.isEmpty
-                            ? const Center(
-                                child: Text('No Tasks yet',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              )
-                            : ListView.builder(
-                                itemCount: tasks.length,
-                                itemBuilder: (context, index) {
-                                  return ActionChip(
-                                    label: Text('${tasks.elementAt(index)}'),
-                                    onPressed: () {}
-                                    );
-                                });
-                      },
-                      error: (err, stackTrace) => const FlutterLogo(),
-                      loading: () => const LinearProgressIndicator()),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ...['mon', 'tue', 'wed', 'thur', 'fri']
-                          .map((e) => Text(e))
-                    ],
-                  )
-                ],
-              ),
-            )),
-        const Gap(
-          width: 12,
-        ),
-        Expanded(
-          flex: 1,
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16), color: Colors.black12),
-            child: IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.chevron_right_outlined)),
-          ),
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24), color: AppColors.lightGrey),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Task Schedule',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          const Gap(height: 12),
+          tasks.when(
+              data: (data) {
+                return data.isEmpty
+                    ? const Center(
+                        child: Text('No Tasks yet'),
+                      )
+                    : Flexible(
+                        child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              return ChoiceChip(
+                                onSelected: (val) {
+                                  value = val ? index : null;
+                                  ref
+                                      .watch(
+                                          taskSelectControllerProvider.notifier)
+                                      .select(data.elementAt(index).taskId);
+                                },
+                                selectedColor: AppColors.seed,
+                                backgroundColor: AppColors.grey,
+                                selected: value == index,
+                                label: const Text('0'),
+                              );
+                            }),
+                      );
+              },
+              error: (err, stackTrace) => const FlutterLogo(),
+              loading: () => const LinearProgressIndicator()),
+        ],
+      ),
     );
   }
 }
 
-class Section3 extends ConsumerWidget {
-  const Section3({super.key});
+
+class TipComponent extends ConsumerWidget {
+  const TipComponent({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SizedBox(
-      height: (MediaQuery.sizeOf(context).height / 3) - 100,
-      // color: Colors.green,
-      child: Row(children: [
-        Expanded(
-          flex: 2,
-          child: Column(
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '1:30:00',
-                        style: TextStyle(
-                            fontSize: 36, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'Focus Timer',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const Gap(height: 12),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Instant Meditation',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Icon(Icons.all_inclusive_outlined)
-                      ]),
-                ),
-              )
-            ],
-          ),
-        ),
-        const Gap(width: 12),
-        Expanded(
-          flex: 1,
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.black26,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            alignment: Alignment.center,
-            child: const UserPointsView(),
-          ),
-        )
-      ]),
+    int? value = 0;
+
+    final tasks = ref.watch(taskControllerProvider);
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24), color: AppColors.lightGrey),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Tips on managing ADHD',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          const Gap(height: 12),
+          tasks.when(
+              data: (data) {
+                final controller = PageController();
+                return data.isEmpty
+                    ? const Center(
+                        child: Text('No Tasks yet'),
+                      )
+                    : Flexible(
+                        child: PageView.builder(
+                            controller: controller,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              return ChoiceChip(
+                                onSelected: (val) {
+                                  value = val ? index : null;
+                                  ref
+                                      .watch(
+                                          taskSelectControllerProvider.notifier)
+                                      .select(data.elementAt(index).taskId);
+                                },
+                                selectedColor: AppColors.seed,
+                                backgroundColor: AppColors.grey,
+                                selected: value == index,
+                                label: const Text('0'),
+                              );
+                            }),
+                      );
+              },
+              error: (err, stackTrace) => const FlutterLogo(),
+              loading: () => const LinearProgressIndicator()),
+        ],
+      ),
     );
   }
 }
@@ -354,5 +288,39 @@ class UserPointsView extends StatelessWidget {
             style: TextStyle(fontSize: 12, color: Colors.black12),
           ),
         ]);
+  }
+}
+
+class FocusTimerComponent extends ConsumerWidget {
+  const FocusTimerComponent({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final timer = ref.watch(focusTimerControllerProvider);
+    return GestureDetector(
+      onTap: () => FocusTimerBottomSheet().present(context),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black26,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              timer,
+              style: const TextStyle(fontSize: 42, fontWeight: FontWeight.bold),
+            ),
+            const Text(
+              'Focus Timer',
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

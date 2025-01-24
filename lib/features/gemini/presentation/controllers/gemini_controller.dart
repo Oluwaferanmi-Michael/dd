@@ -12,7 +12,7 @@ import '../../../chat_with_dd/domain/entities/chat_entity.dart';
 import '../../data/data_sources/gemini_source.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../domain/entities/chat_type.dart';
+
 
 part 'gemini_controller.g.dart';
 

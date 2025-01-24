@@ -29,7 +29,7 @@ class SaveUserImpl extends SaveUserRepo {
         userId: userId,
         userName: userName,
         streak: 0,
-        points: 50,
+        points: 0,
         email: email,
       );
 

@@ -7,3 +7,6 @@ export 'package:firebase_core/firebase_core.dart';
 export 'package:flutter_riverpod/flutter_riverpod.dart';
 
 export 'package:dd/pages/onboarding/auth/auth_gate.dart';
+
+export 'package:dd/config/theme/app_colors.dart';
+export 'package:dd/config/theme/theme.dart';

@@ -34,7 +34,7 @@ class RelaxPage extends ConsumerWidget {
                     decoration: BoxDecoration(
                         color: Colors.black26,
                         borderRadius: BorderRadius.circular(16)),
-                    child: Column(
+                    child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [Text('data'), Text('data')],
                     ),

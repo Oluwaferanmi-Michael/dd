@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dd/core/util/enums.dart';
 import 'package:dd/core/util/logger.dart';
 import 'package:dd/features/tasks/application/task_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -46,10 +47,10 @@ class TaskController extends _$TaskController {
   final _taskService = TaskService();
 
   Future<void> createTask(
-      {required Task task, required DateTime dueDate, required}) async {
+      {required Task task, required DateTime dueDate, required String priority}) async {
     final userId = await ref.read(userIdProvider.future);
     final taskPayload =
-        TaskPayload(task: task, dueDate: dueDate, userId: userId);
+        TaskPayload(task: task, dueDate: dueDate, userId: userId, priority: priority);
     taskPayload.log();
     await _taskService.createTask(taskPayload: taskPayload);
   }

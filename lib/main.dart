@@ -1,4 +1,4 @@
-import 'package:dd/config/theme/theme.dart';
+
 import 'package:dd/core/util/barrel.dart';
 
 Future<void> main() async {

@@ -1,7 +1,8 @@
 import 'package:dd/core/util/barrel.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'components/components.dart';
+
+import 'components/sections.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});

@@ -1,5 +1,4 @@
-import 'package:dd/pages/relax/relax.dart';
-
+import 'package:dd/features/auth/presentation/controllers/authentication_controller.dart';
 
 import 'home/home.dart';
 import 'notes_pages/notes.dart';
@@ -19,21 +18,22 @@ class MainNavPage extends ConsumerWidget {
       const HomePage(),
       const NotesPage(),
       const TasksPage(),
-      const RelaxPage(),
+      // const RelaxPage(),
     ];
 
     return Scaffold(
+      drawer: Drawer(
+        child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+          TextButton(
+              onPressed: () {
+                ref.watch(authServiceProvider.notifier).logOut();
+              },
+              child: const Text('log out'))
+        ]),
+      ),
       appBar: AppBar(
         title: const Text('DD',
             style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-        actions: [
-          Transform.scale(
-              scale: .5,
-              child: Switch(
-                value: true,
-                onChanged: (value) {},
-              ))
-        ],
       ),
       body: screens[index],
       bottomNavigationBar: BottomNavigationBar(
@@ -58,8 +58,8 @@ class MainNavPage extends ConsumerWidget {
             BottomNavigationBarItem(
                 icon: Icon(Icons.sticky_note_2_outlined),
                 label: PageConstants.tasks),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.all_inclusive), label: PageConstants.relax),
+            // BottomNavigationBarItem(
+            //     icon: Icon(Icons.all_inclusive), label: PageConstants.relax),
           ]),
     );
   }

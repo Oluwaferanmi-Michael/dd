@@ -1,15 +1,15 @@
+import 'package:dd/config/theme/insets.dart';
+import 'package:dd/config/widgets/animations/dd_idle_animation.dart';
 import 'package:dd/core/util/barrel.dart';
-import 'package:dd/features/notes/presentation/controller/notes_controller.dart';
-import '../../../config/presentation/strings.dart';
-import '../../dd_chat_screen.dart';
 
+import '../../dd_chat_screen.dart';
+import 'components.dart';
 
 class Section1 extends ConsumerWidget {
   const Section1({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notes = ref.watch(notesControllerProvider);
     return SizedBox(
       height: (MediaQuery.sizeOf(context).height / 3) - 20,
       child: Row(
@@ -18,80 +18,43 @@ class Section1 extends ConsumerWidget {
             child: GestureDetector(
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const ChatWithDDScreen())),
-              child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.circular(16)),
-                  child: Center(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/illustrations/${Illustrations.dd}',
-                            width: 42,
-                          ),
-                          const Gap(
-                            height: 16,
-                          ),
-                          const Text(
-                            'Chat with DD',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          )
-                        ]),
-                  )),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color: Colors.amber,
+                            borderRadius: BorderRadius.circular(16)),
+                        child: const DdIdleAnimationWidget()),
+                  ),
+                  const Gap(
+                    height: 12,
+                  ),
+                  Container(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: Insets.twelve),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Chat with DD',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ))
+                ],
+              ),
             ),
           ),
           const Gap(
             width: 12,
           ),
-          Expanded(
-            child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                    color: Colors.black12,
-                    borderRadius: BorderRadius.circular(16)),
-                child: Center(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Notes',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        const Gap(
-                          height: 12,
-                        ),
-                        Flexible(
-                            child: SizedBox(
-                          child: Center(
-                            child: notes.when(
-                                data: (data) {
-                                  return data.isEmpty
-                                      ? const Text(
-                                          'No New Notes',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      : ListView.builder(
-                                          itemBuilder: (context, index) {
-                                          return Text(
-                                            data.elementAt(index).title,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                            ),
-                                          );
-                                        });
-                                },
-                                error: (e, s) => const FlutterLogo(),
-                                loading: () => const LinearProgressIndicator()),
-                          ),
-                        ))
-                      ]),
-                )),
+          const Expanded(
+            child: NotesSummary(),
           )
         ],
       ),
@@ -107,100 +70,19 @@ class Section2 extends ConsumerWidget {
     return SizedBox(
       // color: Colors.purple[300],
       height: (MediaQuery.sizeOf(context).height / 3) - 20,
-      child: Column(
+      child: const Column(
         children: [
-          Expanded(
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: Colors.black12),
-                    child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.chevron_left_outlined)),
-                  ),
-                ),
-                const Gap(
-                  width: 12,
-                ),
-                Expanded(
-                    flex: 6,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: Colors.black12),
-                      child: Column(
-                        children: [
-                          const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Weekly Schedule'),
-                                Text('data'),
-                              ]),
-                          const Gap(
-                            height: 12,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ...['mon', 'tue', 'wed', 'thur', 'fri']
-                                  .map((e) => Text(e))
-                            ],
-                          )
-                        ],
-                      ),
-                    )),
-                const Gap(
-                  width: 12,
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: Colors.black12),
-                    child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.chevron_right_outlined)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Gap(height: 12),
+          Expanded(child: TipComponent()),
+          Gap(height: 12),
           Expanded(
               flex: 1,
               child: Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        color: Colors.black12),
-                    child: const Column(
-                      children: [
-                        Text('Streak'),
-                        Text('0',
-                            style: TextStyle(
-                                fontSize: 52, fontWeight: FontWeight.w900))
-                      ],
-                    ),
-                  ),
-                  const Gap(
+                  StreakComponent(),
+                  Gap(
                     width: 12,
                   ),
-                  Expanded(
-                      child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        color: Colors.black12),
-                  ))
+                  Expanded(child: SelectedTaskSummary())
                 ],
               ))
         ],
@@ -222,38 +104,28 @@ class Section3 extends ConsumerWidget {
           flex: 2,
           child: Column(
             children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    '1:30:00',
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                  ),
-                ),
+              const Expanded(
+                child: FocusTimerComponent(),
               ),
-              const Gap(height: 12),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Instant Meditation',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Icon(Icons.all_inclusive_outlined)
-                      ]),
-                ),
-              )
+              // const Gap(height: 12),
+              // Expanded(
+              //   child: Container(
+              //     decoration: BoxDecoration(
+              //       color: Colors.black26,
+              //       borderRadius: BorderRadius.circular(16),
+              //     ),
+              //     alignment: Alignment.center,
+              //     child: const Column(
+              //         mainAxisAlignment: MainAxisAlignment.center,
+              //         children: [
+              //           Text(
+              //             'Instant Meditation',
+              //             style: TextStyle(fontSize: 16),
+              //           ),
+              //           Icon(Icons.all_inclusive_outlined)
+              //         ]),
+              //   ),
+              // )
             ],
           ),
         ),
@@ -267,23 +139,7 @@ class Section3 extends ConsumerWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             alignment: Alignment.center,
-            child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Points',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  Text(
-                    '0',
-                    style: TextStyle(fontSize: 72, fontWeight: FontWeight.w900),
-                  ),
-                  Text(
-                    'Unranked',
-                    style: TextStyle(fontSize: 12, color: Colors.black12),
-                  ),
-                ]),
+            child: const UserPointsView(),
           ),
         )
       ]),

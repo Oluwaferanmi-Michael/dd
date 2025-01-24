@@ -7,9 +7,10 @@ typedef Step = String;
 typedef StepId = String;
 typedef TipId = String;
 
-typedef Points = String;
+typedef Points = int;
 
 typedef Task = String;
+typedef TaskDescription = String;
 typedef TaskId = String;
 
 typedef AuthState = bool;

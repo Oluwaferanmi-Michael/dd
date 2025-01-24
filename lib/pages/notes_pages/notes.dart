@@ -3,7 +3,7 @@ import 'package:dd/config/presentation/strings.dart';
 import 'package:dd/features/notes/presentation/controller/notes_controller.dart';
 import 'package:dd/pages/notes_pages/edit_notes_page.dart';
 
-import '../../config/theme/app_colors.dart';
+
 import '../../core/util/barrel.dart';
 
 class NotesPage extends ConsumerWidget {
